@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: globepay__stage_transactions_report
+    description: "Transactions information from Globepay"
+    columns:
+      - name: transaction_id
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+          - not_null
+      - name: transaction_date
+        description: "Date of the transaction"
+        tests:
+          - not_null
+      - name: country
+        description: "Origin country of the transaction"
+        tests:
+          - not_null
+      - name: amount_in_us_dollars
+        description: "Amount of the transaction converted to US dollars"
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('globepay__source_acceptance_report')
+      - dbt_utils.expression_is_true:
+          expression: "amount_in_us_dollars > 0"

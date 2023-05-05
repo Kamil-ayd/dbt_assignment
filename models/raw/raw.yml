@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: globepay__raw_acceptance_report
+    description: "Transactions information from Globepay"
+    columns:
+      - name: ref
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+          - not_null
+      - name: external_ref
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+      - name: date_time
+        description: "Timestamp of the transaction"
+        tests:
+          - not_null
+      - name: state
+        description: "State of the transaction"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['DECLINED', 'ACCEPTED']
+      - name: amount
+        description: "Amount of the transaction in local currency"
+        tests:
+          - not_null
+      - name: country
+        description: "Origin country of the transaction"
+        tests:
+          - not_null
+      - name: currency
+        description: "Currency of the transaction"
+        tests:
+          - not_null
+      - name: rates
+        description: "Json with exchange rate on the moment the transaction happened"
+        tests:
+          - not_null
+      - name: status
+        description: "Status of the transaction"
+        tests:
+          - not_null
+  - name: globepay__raw_chargeback_report
+    description: "Chargeback status information from Globepay"
+    columns:
+      - name: external_ref
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+          - dbt_utils.relationships_where:
+              to: ref('globepay__raw_acceptance_report')
+              field: external_ref
+      - name: status
+        description: "Status of the chargeback"
+        tests:
+          - not_null

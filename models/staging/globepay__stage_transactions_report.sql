@@ -25,7 +25,7 @@ select
     date as transaction_date,
     acceptance_report.state = 'ACCEPTED' as is_accepted,
     acceptance_report.country,
-    chargeback_report.tr_chargeback_status_id is NULL as has_chargeback_information,
+    chargeback_report.tr_chargeback_status_id is not NULL as has_chargeback_information,
     case 
         when chargeback_report.has_chargeback = True 
             then true
