@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: sources
+    database: raw  
+    schema: sources  
+    tables:
+      - name: globepay_chargeback_report
+      - name: globepay_acceptance_report
