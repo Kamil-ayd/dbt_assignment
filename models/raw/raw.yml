@@ -10,7 +10,7 @@ models:
           - unique
           - not_null
       - name: external_ref
-        description: "Unique ID of the transaction"
+        description: "Unique ID of the chargeback transaction"
         tests:
           - unique
       - name: date_time
@@ -47,7 +47,7 @@ models:
     description: "Chargeback status information from Globepay"
     columns:
       - name: external_ref
-        description: "Unique ID of the transaction"
+        description: "Unique ID of the chargeback transaction"
         tests:
           - unique
           - dbt_utils.relationships_where:
