@@ -1,4 +1,7 @@
 select
-    *
+    external_ref as tr_chargeback_status_id,
+    status,
+    source,
+    chargeback as has_chargeback
 from
-    {{source('sources','globepay_chargeback_report')}}
+    {{ref('globepay__raw_chargeback_report')}}
