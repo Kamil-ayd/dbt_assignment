@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: globepay__stage_transactions_report
+    description: "Transactions information from Globepay"
+    columns:
+      - name: transaction_id
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+          - not_null
+      - name: transaction_date
+        description: "Date of the transaction"
+        tests:
+          - not_null
+      - name: country
+        description: "Origin country of the transaction"
+        tests:
+          - not_null
+      - name: amount_in_us_dollars
+        description: "Amount of the transaction converted to US dollars"
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('globepay__source_acceptance_report')
+      - dbt_utils.expression_is_true:
+            expression: "amount_in_us_dollars > 0"
+  - name: globepay__source_acceptance_report
+    description: "Transactions information from Globepay"
+    columns:
+      - name: transaction_id
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+          - not_null
+      - name: tr_chargeback_status_id
+        description: "Unique ID of the chargeback  transaction"
+        tests:
+          - unique
+      - name: date
+        description: "Date of the transaction"
+        tests:
+          - not_null
+      - name: state
+        description: "State of the transaction"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['DECLINED', 'ACCEPTED']
+      - name: amount
+        description: "Amount of the transaction in local currency"
+        tests:
+          - not_null
+      - name: country
+        description: "Origin country of the transaction"
+        tests:
+          - not_null
+      - name: currency
+        description: "Currency of the transaction"
+        tests:
+          - not_null
+      - name: rates
+        description: "Json with exchange rate on the moment the transaction happened"
+        tests:
+          - not_null
+      - name: status
+        description: "Status of the transaction"
+        tests:
+          - not_null
+  - name: globepay__source_chargeback_report
+    description: "Chargeback status information from Globepay"
+    columns:
+      - name: tr_chargeback_status_id
+        description: "Unique ID of the transaction"
+        tests:
+          - unique
+          - dbt_utils.relationships_where:
+              to: ref('globepay__source_acceptance_report')
+              field: tr_chargeback_status_id
+      - name: status
+        description: "Status of the chargeback"
+        tests:
+          - not_null
+      - name: has_chargeback
+        description: "Status of the chargeback"
+        tests:
+          - not_null
